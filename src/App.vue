@@ -5,10 +5,12 @@
         <a class="navbar-brand" href="#">
           <img src="@/assets/logo_rukovnik.png" alt="Logo" height="80" class="d-inline-block align-text-top">
         </a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
@@ -21,12 +23,10 @@
               <router-link to="/signup" class="nav-link">Signup</router-link>
             </li>
           </ul>
-          <form class="d-flex ms-auto" role="search">
-            <input class="form-control me-2" type="search" placeholder="Pretraga" aria-label="Search" />
-          </form>
         </div>
       </div>
     </nav>
+
     <div class="container">
       <router-view />
     </div>
