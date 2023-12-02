@@ -3,6 +3,8 @@
   <div class="col-2"></div>
   <div class="col-7">
     <NoteCard/>
+    <NoteCard/>
+    <NoteCard/>
   </div>
   <div class="col-3">
   ... ovdje ide desni stupac!
