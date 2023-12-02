@@ -5,14 +5,11 @@
         <a class="navbar-brand" href="#">
           <img src="@/assets/logo_rukovnik.png" alt="Logo" height="80" class="d-inline-block align-text-top">
         </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
+        <div class="dropdown d-lg-none">
+          <button class="navbar-toggler dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            Menu
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <li class="nav-item">
               <router-link to="/" class="nav-link">Home</router-link>
             </li>
@@ -24,8 +21,40 @@
             </li>
           </ul>
         </div>
+        <button class="navbar-toggler d-none d-lg-block"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse d-lg-block" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <router-link to="/" class="nav-link">Home</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/login" class="nav-link">Login</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/signup" class="nav-link">Signup</router-link>
+            </li>
+          </ul>
+          <form class="d-flex" role="search">
+            <input v-model="searchText"
+                   class="form-control me-2"
+                   type="search"
+                   placeholder="Pretraga"
+                   aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+        </div>
       </div>
     </nav>
+
+    {{ searchText }}
 
     <div class="container">
       <router-view />
@@ -33,25 +62,26 @@
   </div>
 </template>
 
+<script>
+export default {
+  name: 'app',
+  data() {
+    return {
+      searchText: 'primjer2',
+    };
+  },
+};
+</script>
+
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+/* Vaš postojeći stil */
+
+/* Dodatni stil za dropdown izbornik */
+.dropdown-menu {
+  display: none;
 }
 
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+.dropdown-menu.show {
+  display: block;
 }
 </style>
