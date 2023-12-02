@@ -6,20 +6,24 @@
     <NoteCard/>
     <NoteCard/>
   </div>
-  <div class="col-3">
-  ... ovdje ide desni stupac!
-  </div>
+  <div class="col-3">Sidebar {{ hello }} {{ lista }}</div>
   </div>
  </template>
 
 <script>
 // @ is an alias to /src
-import NoteCard from '@/components/NoteCard.vue'
+import NoteCard from '@/components/NoteCard.vue';
 
 export default {
   name: 'HomeView',
+  data() {
+    return {
+      hello: 'world',
+      lista: [1, 2, 3, 'lj'],
+    };
+  },
   components: {
     NoteCard,
-  }
-}
+  },
+};
 </script>
