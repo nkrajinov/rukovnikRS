@@ -6,7 +6,7 @@
     <NoteCard/>
     <NoteCard/>
   </div>
-  <div class="col-3">Sidebar {{ hello }} {{ lista }}</div>
+  <div class="col-3"></div>
   </div>
  </template>
 
@@ -14,14 +14,9 @@
 // @ is an alias to /src
 import NoteCard from '@/components/NoteCard.vue';
 
+
 export default {
   name: 'HomeView',
-  data() {
-    return {
-      hello: 'world',
-      lista: [1, 2, 3, 'lj'],
-    };
-  },
   components: {
     NoteCard,
   },

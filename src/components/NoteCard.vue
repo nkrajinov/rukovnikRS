@@ -14,10 +14,8 @@
 </template>
 
 <script>
+//JS kod
 export default {
   name: 'NoteCard',
-  props: {
-    msg: String
-  }
 }
 </script>
