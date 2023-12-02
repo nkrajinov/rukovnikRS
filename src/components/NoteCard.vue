@@ -1,21 +1,21 @@
 <template>
   <div class="card text-center">
-      <div class="card-header">
-       Moje putovanje
-      </div>
-      <div class="card-body p-0">
-       <h5 class="card-title">Moja bilješka</h5>
-       <p class="card-text">Tekst bilješke mog putovanja, datum.</p>
-      </div>
-      <div class="card-footer text-body-secondary">
-    2 days ago
-       </div>
+    <div class="card-header">
+      {{ info.grad }}
+    </div>
+    <div class="card-body p-0">
+      <h5 class="card-title">{{ info.naziv_biljeske }}</h5>
+      <p class="card-text">Tekst bilješke mog putovanja, datum.</p>
+    </div>
+    <div class="card-footer text-body-secondary">
+      {{ info.vrijeme }}
+    </div>
   </div>
 </template>
 
 <script>
-//JS kod
 export default {
+  props: ['info'],
   name: 'NoteCard',
-}
+};
 </script>
