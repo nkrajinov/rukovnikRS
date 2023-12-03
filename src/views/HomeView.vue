@@ -2,8 +2,8 @@
   <div class="row">
     <div class="col-2"></div>
     <div class="col-7">
-      <NoteCard v-for="card in cards" :key="card.grad" :info="card" />
-    </div>
+      <NoteCard v-for="card in filteredCards" :key="card.grad" :info="card" />
+    </div> 
     <div class="col-3">
       Sidebar
       {{ store.searchTerm }}
@@ -23,11 +23,24 @@ let cards = [
 
 export default {
   name: 'HomeView',
-  data() {
+  data() { //f
     return {
-      cards: cards,
+      cards,
       store,
     };
+  },
+  computed: { //objekt i unutra f za obradu ili filter
+    filteredCards() {
+      //logika koja filtrira cards, trebamo this pokazivač za pristupanje u data dio
+      let termin = this.store.searchTerm;
+      let newCards = [];
+      for (let card of this.cards) {
+        if (card.naziv_biljeske.indexOf(termin) >= 0){
+          newCards.push(card);
+        }
+      }
+      return newCards;
+    },
   },
   components: {
     NoteCard,
