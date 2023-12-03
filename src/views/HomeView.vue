@@ -33,13 +33,8 @@ export default {
     filteredCards() {
       //logika koja filtrira cards, trebamo this pokazivač za pristupanje u data dio
       let termin = this.store.searchTerm;
-      let newCards = [];
-      for (let card of this.cards) {
-        if (card.naziv_biljeske.indexOf(termin) >= 0){
-          newCards.push(card);
-        }
-      }
-      return newCards;
+      //odaberemo array kojeg želimo filtrirati, pozovemo metodu filter i kao parametar predamo f koji će za svaki card koji je unutar cardova vratiti T ili F
+      return this.cards.filter(card => card.naziv_biljeske.indexOf(termin) >=0);
     },
   },
   components: {
