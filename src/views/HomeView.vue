@@ -4,12 +4,16 @@
     <div class="col-7">
       <NoteCard v-for="card in cards" :key="card.grad" :info="card" />
     </div>
-    <div class="col-3"></div>
+    <div class="col-3">
+      Sidebar
+      {{ store.searchTerm }}
+    </div>
   </div>
 </template>
 
 <script>
 import NoteCard from '@/components/NoteCard.vue';
+import store from "@/store";
 
 let cards = [
   { grad: 'Zagreb', naziv_biljeske: 'Posjet Zoo vrtu', vrijeme: 'prije nekoliko trenutaka' },
@@ -22,6 +26,7 @@ export default {
   data() {
     return {
       cards: cards,
+      store,
     };
   },
   components: {

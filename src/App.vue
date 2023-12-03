@@ -43,7 +43,7 @@
             </li>
           </ul>
           <form class="d-flex" role="search">
-            <input v-model="searchText"
+            <input v-model="store.searchTerm"
                    class="form-control me-2"
                    type="search"
                    placeholder="Pretraga"
@@ -54,7 +54,7 @@
       </div>
     </nav>
 
-    {{ searchText }}
+    {{ store.searchTerm }}
 
     <div class="container">
       <router-view />
@@ -63,11 +63,12 @@
 </template>
 
 <script>
+import store from "@/store";
 export default {
   name: 'app',
   data() {
     return {
-      searchText: 'primjer2',
+      store,
     };
   },
 };
