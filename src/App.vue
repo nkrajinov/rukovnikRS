@@ -41,6 +41,9 @@
             <li class="nav-item">
               <router-link to="/signup" class="nav-link">Signup</router-link>
             </li>
+            <li class="nav-item">
+              <a href="#" @click="logout()" class="nav-link">Logout</a>
+            </li>
           </ul>
           <form class="d-flex" role="search">
             <input v-model="store.searchTerm"
@@ -63,12 +66,34 @@
 
 <script>
 import store from "@/store";
+import { firebase } from 'firebase/app';
+
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    //Korisnik je ulogiran.
+    console.log('***', user.email);
+  } else {
+    //Korisnik nije ulogiran.
+    console.log('No user');
+  }
+});
+
 export default {
   name: 'app',
   data() {
     return {
       store,
     };
+  },
+  methods: {
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$router.push({ name: 'login'});
+        });
+    },
   },
 };
 </script>
