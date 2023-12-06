@@ -35,14 +35,14 @@
             <li class="nav-item">
               <router-link to="/" class="nav-link">Home</router-link>
             </li>
-            <li class="nav-item">
+            <li v-if="!store.currentUser" class="nav-item">
               <router-link to="/login" class="nav-link">Login</router-link>
             </li>
-            <li class="nav-item">
+            <li v-if="!store.currentUser" class="nav-item">
               <router-link to="/signup" class="nav-link">Signup</router-link>
             </li>
-            <li class="nav-item">
-              <a href="#" @click="logout()" class="nav-link">Logout</a>
+            <li v-if="store.currentUser" class="nav-item">
+              <a href="#" @click.prevent="logout()" class="nav-link">Logout</a>
             </li>
           </ul>
           <form class="d-flex" role="search">
@@ -65,16 +65,23 @@
 </template>
 
 <script>
-import store from "@/store";
+import store from '@/store';
 import { firebase } from 'firebase/app';
+import router from '@/router';
 
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     //Korisnik je ulogiran.
     console.log('***', user.email);
+    store.currentUser = user.email;
   } else {
     //Korisnik nije ulogiran.
     console.log('No user');
+    store.currentUser = null;
+     
+    if (router.name !=='login'){
+      router.push({ name: "login"})
+    }
   }
 });
 
