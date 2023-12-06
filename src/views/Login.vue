@@ -36,14 +36,12 @@ export default {
   methods: {
     login() {
       console.log('login...' + this.username);
-      console.log(this.$router);
 
       firebase
         .auth()
         .signInWithEmailAndPassword(this.username, this.password)
         .then((result) => {
           console.log("Uspjesna prijava", result);
-          this.$router.replace({ name: 'home'}); 
         })
         .catch(function(e) {
           console.error('Greska: ', e);

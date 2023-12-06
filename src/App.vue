@@ -70,17 +70,23 @@ import { firebase } from 'firebase/app';
 import router from '@/router';
 
 firebase.auth().onAuthStateChanged((user) => {
+  const currentRoute = router.currentRoute;
+  console.log('Provjera stanja logina.');
   if (user) {
     //Korisnik je ulogiran.
     console.log('***', user.email);
     store.currentUser = user.email;
+    
+    if (!currentRoute.meta.needsUser) {
+      router.push({ name: 'home'});
+    }
   } else {
     //Korisnik nije ulogiran.
     console.log('No user');
     store.currentUser = null;
      
-    if (router.name !=='login'){
-      router.push({ name: "login"})
+    if (currentRoute.meta.needsUser){
+      router.push({ name: "login"});
     }
   }
 });
