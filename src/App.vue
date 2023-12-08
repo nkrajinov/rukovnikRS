@@ -66,10 +66,10 @@
 
 <script>
 import store from '@/store';
-import { firebase } from 'firebase/app';
+import { auth } from '@/firebase';
 import router from '@/router';
 
-firebase.auth().onAuthStateChanged((user) => {
+auth.onAuthStateChanged((user) => {
   const currentRoute = router.currentRoute;
   console.log('Provjera stanja logina.');
   if (user) {
