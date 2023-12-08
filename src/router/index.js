@@ -1,9 +1,7 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import { createRouter, createWebHistory } from "vue-router";
+
 import HomeView from '../views/HomeView.vue';
 import store from '@/store';
-
-Vue.use(VueRouter);
 
 const routes = [
   {
@@ -26,19 +24,19 @@ const routes = [
   },
 ];
 
-const router = new VueRouter({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(),
   base: process.env.BASE_URL,
   routes,
 });
 
-router.beforeEach( (to, from, next) =>{
+router.beforeEach((to, from, next) => {
   console.log("Stara ruta", from.name, " -> nova ruta", to.name, "korisnik", store.currentUser);
-  
+
   const noUser = store.currentUser == null;
-  if (noUser && to.meta.needsUser){
+  if (noUser && to.meta.needsUser) {
     next('login');
-  }else{
+  } else {
     next();
   }
 });
