@@ -24,7 +24,7 @@
   </div>
 </template>
 <script>
-import { firebase } from '@/firebase';
+import { auth } from '@/firebase';
 export default {
   name: "login",
   data() {
