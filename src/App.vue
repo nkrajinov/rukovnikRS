@@ -69,7 +69,7 @@ import store from '@/store';
 import { auth } from '@/firebase';
 import router from '@/router';
 
-auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged((user) => {//detekcija promjene ulogiranosti
   const currentRoute = router.currentRoute;
   console.log('Provjera stanja logina.');
   
