@@ -30,15 +30,20 @@ const router = createRouter({
   routes,
 });
 
+//listener koji nam omogućava kontrolu, ako se slažemo-ide na next
 router.beforeEach((to, from, next) => {
   console.log("Stara ruta", from.name, " -> nova ruta", to.name, "korisnik", store.currentUser);
 
   const noUser = store.currentUser == null;
-  if (noUser && to.meta.needsUser) {
-    next('login');
+
+  if (to.meta && to.meta.needsUser && noUser) {
+    // ako ruta zahtijeva autentikaciju i nema korisnika ulogiranog
+    next('/login');
   } else {
+    // ako ruta ne zahtijeva aut. tj.korisnik je ulogiran
     next();
   }
 });
+
 
 export default router;
