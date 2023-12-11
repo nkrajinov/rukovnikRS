@@ -24,7 +24,9 @@
   </div>
 </template>
 <script>
-import { auth } from '@/firebase';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { app } from '@/firebase';
+
 export default {
   name: "login",
   data() {
@@ -37,12 +39,15 @@ export default {
     login() {
       console.log('login...' + this.username);
 
-      auth.signInWithEmailAndPassword(this.username, this.password)
-        .then((result) => {
-          console.log("Uspješna prijava", result);
+      const auth = getAuth(app); // dohvati 'auth' object uz pomoć getAuth metode
+
+      signInWithEmailAndPassword(auth, this.username, this.password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log("Successful login", user);
         })
         .catch(function(e) {
-          console.error('Došlo je do greške: ', e);
+          console.error('Error: ', e);
         });
     },
   },
