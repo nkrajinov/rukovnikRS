@@ -29,7 +29,8 @@
   </template>
   
   <script>
-  import { auth } from '@/firebase';
+  import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+  import { app } from '@/firebase'; 
   
   export default {
     name: 'Signup',
@@ -37,17 +38,18 @@
       return {
         username: '',
         password: '',
-        passwordRepeat: '',
+        passwordRepeat: ''
       };
     },
     methods: {
       signup() {
+        const auth = getAuth(app);
         if (this.password !== this.passwordRepeat) {
           console.error("Lozinke se ne podudaraju");
           return;
         }
   
-        auth.createUserWithEmailAndPassword(this.username, this.password)
+        createUserWithEmailAndPassword(auth,this.username, this.password)
           .then(() => {
             console.log('Uspješna registracija');
           })

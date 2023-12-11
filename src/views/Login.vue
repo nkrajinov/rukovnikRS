@@ -37,14 +37,12 @@ export default {
     login() {
       console.log('login...' + this.username);
 
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.username, this.password)
+      auth.signInWithEmailAndPassword(this.username, this.password)
         .then((result) => {
-          console.log("Uspjesna prijava", result);
+          console.log("Uspješna prijava", result);
         })
         .catch(function(e) {
-          console.error('Greska: ', e);
+          console.error('Došlo je do greške: ', e);
         });
     },
   },

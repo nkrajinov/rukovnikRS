@@ -72,12 +72,13 @@ import router from '@/router';
 auth.onAuthStateChanged((user) => {
   const currentRoute = router.currentRoute;
   console.log('Provjera stanja logina.');
+  
   if (user) {
     //Korisnik je ulogiran.
     console.log('***', user.email);
     store.currentUser = user.email;
     
-    if (!currentRoute.meta.needsUser) {
+    if (currentRoute.meta && currentRoute.meta.needsUser !== undefined && !currentRoute.meta.needsUser) {
       router.push({ name: 'home'});
     }
   } else {
@@ -85,11 +86,12 @@ auth.onAuthStateChanged((user) => {
     console.log('No user');
     store.currentUser = null;
      
-    if (currentRoute.meta.needsUser){
+    if (currentRoute.meta && currentRoute.meta.needsUser !== undefined && currentRoute.meta.needsUser) {
       router.push({ name: "login"});
     }
   }
 });
+
 
 export default {
   name: 'app',
