@@ -48,25 +48,44 @@
 import NoteCard from '@/components/NoteCard.vue';
 import store from "@/store";
 import { db } from '@/firebase';
+import { collection, getDocs, addDoc } from 'firebase/firestore/lite';
 
-let cards = [
-  { grad: 'Zagreb', naziv_biljeske: 'Posjet Zoo vrtu', vrijeme: 'prije nekoliko trenutaka' },
-  { grad: 'Madrid', naziv_biljeske: 'muzej', vrijeme: 'prije 8 dana' },
-  { grad: 'Paris', naziv_biljeske: 'E.toranj', vrijeme: 'prije godinu' },
-];
+//let cards = [
+//  { grad: 'Zagreb', naziv_biljeske: 'Posjet Zoo vrtu', vrijeme: 'prije nekoliko trenutaka' },
+//  { grad: 'Madrid', naziv_biljeske: 'muzej', vrijeme: 'prije 8 dana' },
+//  { grad: 'Paris', naziv_biljeske: 'E.toranj', vrijeme: 'prije godinu' },
+//];
 
 export default {
   name: 'HomeView',
-  data() { //f
-    return {
-      cards,
-      store,
-      newNoteGrad: "",
-      newNoteNaziv: "",
-      newNoteText: "",
-    };
-  },
-  methods: {
+  data() {
+  return {
+    cards: [],//kod objekta ide :
+    store,
+    newNoteGrad: "",
+    newNoteNaziv: "",
+    newNoteText: "",
+  };
+},
+mounted() {
+  this.fetchNotes();
+},
+methods: {
+    async fetchNotes() {
+      try {
+        const notesSnapshot = await getDocs(notesCollectionRef);
+
+        this.cards = [];
+        notesSnapshot.forEach((doc) => {
+          this.cards.push(doc.data());
+        });
+
+        console.log('firebase dohvat...:', this.cards);
+      } catch (error) {
+        console.error('Greška u dohvatu:', error);
+      }
+    },
+    
     postNewNote() {
       console.log("OK");
 
@@ -74,27 +93,30 @@ export default {
       const noteNaziv = this.newNoteNaziv;
       const noteText = this.newNoteText;
 
-      db.collection('posts').add({
+      const notesCollectionRef = collection(db, 'notes');
+
+      addDoc(notesCollectionRef, {
         grad: notePutovanje,
         naz: noteNaziv,
         tekst: noteText,
         email: store.currentUser,
         posted_at: Date.now(),
-      }).then((docRef) => {
-        console.log('Spremljeno', docRef.id);
-      })
-      .catch((error) => {
-        console.error(e);
-      });
+     }).then((docRef) => {
+       console.log('Spremljeno', docRef.id);
+      }).catch((error) => {
+       console.error(error);
+     });
     },
+
   },
-  computed: { //objekt i unutra f za obradu ili filter
+  computed: {
     filteredCards() {
-      //logika koja filtrira cards, trebamo this pokazivač za pristupanje u data dio
       let termin = this.store.searchTerm;
-      //odaberemo array kojeg želimo filtrirati, pozovemo metodu filter i kao parametar predamo f koji će za svaki card koji je unutar cardova vratiti T ili F
       return this.cards.filter(card => card.naziv_biljeske.includes(termin));
     },
+  },
+  created() {
+    this.fetchNotes();
   },
   components: {
     NoteCard,
