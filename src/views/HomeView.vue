@@ -59,21 +59,22 @@ import { collection, getDocs, addDoc } from 'firebase/firestore/lite';
 export default {
   name: 'HomeView',
   data() {
-  return {
-    cards: [],//kod objekta ide :
-    store,
-    newNoteGrad: "",
-    newNoteNaziv: "",
-    newNoteText: "",
-  };
-},
-mounted() {
-  this.fetchNotes();
-},
-methods: {
+    return {
+      cards: [],//kod objekta ide dvotočka
+      store,
+      newNoteGrad: "",
+      newNoteNaziv: "",
+      newNoteText: "",
+      notesCollectionRef: collection(db, 'notes'),
+    };
+  },
+  mounted() {
+    this.fetchNotes();
+  },
+  methods: {
     async fetchNotes() {
       try {
-        const notesSnapshot = await getDocs(notesCollectionRef);
+        const notesSnapshot = await getDocs(this.notesCollectionRef);
 
         this.cards = [];
         notesSnapshot.forEach((doc) => {
@@ -86,35 +87,41 @@ methods: {
       }
     },
     
-    postNewNote() {
+    async postNewNote() {
       console.log("OK");
 
       const notePutovanje = this.newNoteGrad;
       const noteNaziv = this.newNoteNaziv;
       const noteText = this.newNoteText;
 
-      const notesCollectionRef = collection(db, 'notes');
+      try {
+        await addDoc(this.notesCollectionRef, {
+          grad: notePutovanje,
+          naz: noteNaziv,
+          tekst: noteText,
+          email: store.currentUser,
+          posted_at: Date.now(),
+        });
 
-      addDoc(notesCollectionRef, {
-        grad: notePutovanje,
-        naz: noteNaziv,
-        tekst: noteText,
-        email: store.currentUser,
-        posted_at: Date.now(),
-     }).then((docRef) => {
-       console.log('Spremljeno', docRef.id);
-      }).catch((error) => {
-       console.error(error);
-     });
+        console.log('Spremljeno');
+        
+        // Fetch notes again after adding a new note
+        await this.fetchNotes();
+      } catch (error) {
+        console.error(error);
+      }
     },
-
   },
   computed: {
-    filteredCards() {
-      let termin = this.store.searchTerm;
-      return this.cards.filter(card => card.naziv_biljeske.includes(termin));
-    },
+  filteredCards() {
+    let termin = this.store.searchTerm;
+    return this.cards.filter(card => {
+      // Check if card.naziv_biljeske exists and is a string before using includes
+      return card.naziv_biljeske && typeof card.naziv_biljeske === 'string' &&
+        card.naziv_biljeske.includes(termin);
+    });
   },
+},
   created() {
     this.fetchNotes();
   },
