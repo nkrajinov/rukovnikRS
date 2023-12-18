@@ -24,7 +24,7 @@
   export default {
     data() {
       return {
-        updatedNoteGrad: '', // Dodajte potrebne podatke za uređivanje bilješke
+        updatedNoteGrad: '',
         updatedNoteNaziv: '',
         updatedNoteText: '',
       };
@@ -41,7 +41,6 @@ noteRef.update({
   grad: this.updatedNoteGrad,
   naziv_biljeske: this.updatedNoteNaziv,
   tekst: this.updatedNoteText,
-  // Dodajte ostale atribute koje želite ažurirati
 })
 .then(() => {
   console.log('Bilješka je uspješno ažurirana.');
