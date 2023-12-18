@@ -9,6 +9,10 @@
     </div>
     <div class="card-footer text-body-secondary">
       {{ formatTime(info.posted_at) }}
+
+      <!-- Dodani gumbi za Uredi i Obriši -->
+      <button @click="editNote" class="btn btn-primary btn-sm m-1">Uredi</button>
+      <button @click="deleteNote" class="btn btn-danger btn-sm m-1">Obriši</button>
     </div>
   </div>
 </template>
@@ -19,10 +23,24 @@ export default {
   name: 'NoteCard',
   methods: {
     formatTime(timestamp) {
-      // Format the timestamp to display it as desired (e.g., using moment.js or Date methods)
-      // Example format using Date:
       const date = new Date(timestamp);
-      return date.toLocaleString(); // Modify this according to your preferred time format
+      return date.toLocaleString();
+    },
+    editNote() {
+      // Implementirajte logiku za uređivanje bilješke
+      // Ovo može otvoriti dijalog za uređivanje bilješke ili preusmjeriti na posebnu stranicu za uređivanje
+      // Primjer: this.$router.push(`/edit-note/${this.info.id}`);
+    },
+    deleteNote() {
+      // Implementirajte logiku za brisanje bilješke
+      // Ovdje možete koristiti Firebase da izbrišete bilješku s ID-om this.info.id iz baze
+      // Primjer:
+      // const noteRef = db.collection('notes').doc(this.info.id);
+      // noteRef.delete().then(() => {
+      //   // Bilješka je uspješno obrisana iz baze, možete ažurirati prikaz na korisničkom sučelju
+      // }).catch((error) => {
+      //   console.error('Greška pri brisanju bilješke:', error);
+      // });
     },
   },
 };
