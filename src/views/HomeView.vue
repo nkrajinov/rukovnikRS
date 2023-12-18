@@ -4,35 +4,38 @@
     <div class="col-7">
       <form @submit.prevent="postNewNote" class="form-inline mb-5">
         <div class="form-group">
-          <label for="notePutovanje">Putovanje</label>
-          <input
-            v-model="newNoteGrad"
-            type="text"
-            class="form-control ml-2"
-            placeholder="Unesite ime grada"
-            id="gradid"
-          />
-        </div>
-        <div class="form-group">
-          <label for="noteNaziv">Naziv bilješke</label>
-          <input
-            v-model="newNoteNaziv"
-            type="text"
-            class="form-control ml-2"
-            placeholder="Unesite naziv bilješke"
-            id="nazivid"
-          />
-        </div>
-        <div class="form-group">
-          <label for="noteText">Tekst bilješke</label>
-          <input
-            v-model="newNoteText"
-            type="text"
-            class="form-control ml-2"
-            placeholder="Unesite tekst bilješke"
-            id="tekstid"
-          />
-        </div>
+  <label for="gradid">Putovanje</label>
+  <input
+    v-model="newNoteGrad"
+    type="text"
+    class="form-control ml-2"
+    placeholder="Unesite ime grada"
+    id="gradid"
+    name="newNoteGrad"
+  />
+</div>
+<div class="form-group">
+  <label for="nazivid">Naziv bilješke</label>
+  <input
+    v-model="newNoteNaziv"
+    type="text"
+    class="form-control ml-2"
+    placeholder="Unesite naziv bilješke"
+    id="nazivid"
+    name="newNoteNaziv"
+  />
+</div>
+<div class="form-group">
+  <label for="tekstid">Tekst bilješke</label>
+  <input
+    v-model="newNoteText"
+    type="text"
+    class="form-control ml-2"
+    placeholder="Unesite tekst bilješke"
+    id="tekstid"
+    name="newNoteText"
+  />
+</div>
         <button type="submit" class="btn btn-primary ml-2">Objavi bilješku</button>
       </form>
       <NoteCard v-for="card in filteredCards" :key="card.grad" :info="card" />
