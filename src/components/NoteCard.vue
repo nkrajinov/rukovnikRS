@@ -9,8 +9,6 @@
     </div>
     <div class="card-footer text-body-secondary">
       {{ formatTime(info.posted_at) }}
-
-      <!-- Dodani gumbi za Uredi i Obriši -->
       <button @click="editNote" class="btn btn-primary btn-sm m-1">Uredi</button>
       <button @click="deleteNote" class="btn btn-danger btn-sm m-1">Obriši</button>
     </div>
@@ -27,9 +25,7 @@ export default {
       return date.toLocaleString();
     },
     editNote() {
-      // Implementirajte logiku za uređivanje bilješke
-      // Ovo može otvoriti dijalog za uređivanje bilješke ili preusmjeriti na posebnu stranicu za uređivanje
-      // Primjer: this.$router.push(`/edit-note/${this.info.id}`);
+      this.$router.push({ name: 'EditNote', params: { id: this.info.id } });
     },
     deleteNote() {
       // Implementirajte logiku za brisanje bilješke

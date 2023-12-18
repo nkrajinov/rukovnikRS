@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import HomeView from '../views/HomeView.vue';
+import EditNote from '../views/EditNote.vue'; // Pretpostavka da je EditNote.vue vaša komponenta za uređivanje bilješke
 import store from '@/store';
 
 const routes = [
@@ -21,6 +22,14 @@ const routes = [
     path: '/Signup',
     name: 'Signup',
     component: () => import('../views/Signup.vue')
+  },
+  {
+    path: '/edit-note/:id', // Definiramo rutu za uređivanje bilješke s dinamičkim ID-om
+    name: 'EditNote',
+    component: EditNote,
+    meta: {
+      needsUser: true, // Možete postaviti meta podatke prema potrebi
+    },
   },
 ];
 
@@ -44,6 +53,5 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
-
 
 export default router;
