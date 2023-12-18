@@ -4,7 +4,7 @@
       {{ info.grad }}
     </div>
     <div class="card-body p-0">
-      <h5 class="card-title">{{ info.naz }}</h5>
+      <h5 class="card-title">{{ info.naziv_biljeske }}</h5>
       <p class="card-text">{{ info.tekst }}</p>
     </div>
     <div class="card-footer text-body-secondary">

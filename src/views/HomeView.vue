@@ -68,7 +68,7 @@ export default {
       notesCollectionRef: collection(db, 'notes'),
     };
   },
-  mounted() {
+  mounted() {//atribut trenutak kada se komponenta prikaže na ekranu
     this.fetchNotes();
   },
   methods: {
@@ -86,32 +86,42 @@ export default {
         console.error('Greška u dohvatu:', error);
       }
     },
-    
     async postNewNote() {
-      console.log("OK");
+  console.log("OK");
 
-      const notePutovanje = this.newNoteGrad;
-      const noteNaziv = this.newNoteNaziv;
-      const noteText = this.newNoteText;
+  const notePutovanje = this.newNoteGrad;
+  const noteNaziv = this.newNoteNaziv;
+  const noteText = this.newNoteText;
 
-      try {
-        await addDoc(this.notesCollectionRef, {
-          grad: notePutovanje,
-          naz: noteNaziv,
-          tekst: noteText,
-          email: store.currentUser,
-          posted_at: Date.now(),
-        });
+  try {
+    const newNoteRef = await addDoc(this.notesCollectionRef, {
+      grad: notePutovanje,
+      naziv_biljeske: noteNaziv, // Promijenjen naziv ključa u skladu s vašim podacima
+      tekst: noteText,
+      email: store.currentUser,
+      posted_at: Date.now(),
+    });
 
-        console.log('Spremljeno');
-        
-        // Fetch notes again after adding a new note
-        await this.fetchNotes();
-      } catch (error) {
-        console.error(error);
-      }
-    },
-  },
+    console.log('Spremljeno');
+
+    const newNoteData = {
+      grad: notePutovanje,
+      naziv_biljeske: noteNaziv, // Promijenjen naziv ključa u skladu s vašim podacima
+      tekst: noteText,
+      email: store.currentUser,
+      posted_at: Date.now(),
+      id: newNoteRef.id, // Dodajte ID novododane bilješke u lokalni objekt
+    };
+
+    this.cards.push(newNoteData); // Dodajte novu bilješku u this.cards
+    this.newNoteGrad = ''; // Očistite polja nakon dodavanja bilješke
+    this.newNoteNaziv = '';
+    this.newNoteText = '';
+  } catch (error) {
+    console.error(error);
+  }
+},
+},
   computed: {
   filteredCards() {
     let termin = this.store.searchTerm;
