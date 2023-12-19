@@ -24,11 +24,11 @@ const routes = [
     component: () => import('../views/Signup.vue')
   },
   {
-    path: '/edit-note/:id', // Definiramo rutu za uređivanje bilješke s dinamičkim ID-om
+    path: '/edit-note/:id',
     name: 'EditNote',
     component: EditNote,
     meta: {
-      needsUser: true, // Možete postaviti meta podatke prema potrebi
+      needsUser: true,
     },
   },
 ];

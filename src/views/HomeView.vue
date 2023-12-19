@@ -109,7 +109,7 @@ export default {
 
     const newNoteData = {
       grad: notePutovanje,
-      naziv_biljeske: noteNaziv, // Promijenjen naziv ključa u skladu s vašim podacima
+      naziv_biljeske: noteNaziv,
       tekst: noteText,
       email: store.currentUser,
       posted_at: Date.now(),

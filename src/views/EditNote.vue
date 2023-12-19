@@ -27,30 +27,46 @@
         updatedNoteGrad: '',
         updatedNoteNaziv: '',
         updatedNoteText: '',
+        noteId: this.$route.params.id,//spremam id bilješke iz rute u komponenti
       };
     },
-    methods: {
-      updateNote() {
-        const noteId = this.$route.params.id;
-
-// Referenca na dokument u Firestore-u koji želimo ažurirati
-const noteRef = db.collection('notes').doc(noteId);
-
-// Ažuriranje podataka bilješke u bazi podataka
-noteRef.update({
-  grad: this.updatedNoteGrad,
-  naziv_biljeske: this.updatedNoteNaziv,
-  tekst: this.updatedNoteText,
-})
-.then(() => {
-  console.log('Bilješka je uspješno ažurirana.');
-  // Opcionalno: Preusmjerite korisnika natrag na početnu stranicu ili gdje god želite
-})
-.catch((error) => {
-  console.error('Greška pri ažuriranju bilješke:', error);
-});
-      },
+    methods: {//dohvaćam podatke bilješke iz Firestore-a na temelju ID-a
+    async fetchNoteData() {
+      try {
+        const doc = await db.collection('notes').doc(this.noteId).get();
+        if (doc.exists) {
+          const data = doc.data();
+          // Postavite vrijednosti podataka bilješke u vaše inpute za uređivanje
+          this.updatedNoteGrad = data.grad || '';
+          this.updatedNoteNaziv = data.naziv_biljeske || '';
+          this.updatedNoteText = data.tekst || '';
+        } else {
+          console.error('Dokument ne postoji');
+        }
+      } catch (error) {
+        console.error('Greška pri dohvatu podataka:', error);
+      }
     },
-  };
-  </script>
-  
+    async updateNote() {
+      try {
+        // Ako želite osigurati da su podaci bilješke ažurirani prije nego što preusmjerite korisnika,
+        // možete pričekati da se ažuriranje završi prije preusmjeravanja
+        await db.collection('notes').doc(this.noteId).update({
+          grad: this.updatedNoteGrad,
+          naziv_biljeske: this.updatedNoteNaziv,
+          tekst: this.updatedNoteText,
+        });
+
+        console.log('Bilješka je uspješno ažurirana.');
+        // Ovdje možete postaviti logiku za preusmjeravanje korisnika na željenu rutu
+      } catch (error) {
+        console.error('Greška pri ažuriranju bilješke:', error);
+      }
+    },
+  },
+  mounted() {
+    // Kada se komponenta mounta, dohvatite podatke bilješke iz baze
+    this.fetchNoteData();
+  },
+};
+</script>
