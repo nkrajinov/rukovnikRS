@@ -20,23 +20,26 @@
   </template>
   
   <script>
- import { db } from '@/firebase';
-  export default {
-    data() {
-      return {
-        updatedNoteGrad: '',
-        updatedNoteNaziv: '',
-        updatedNoteText: '',
-        noteId: this.$route.params.id,//spremam id bilješke iz rute u komponenti
-      };
-    },
-    methods: {//dohvaćam podatke bilješke iz Firestore-a na temelju ID-a
+import { db } from '@/firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore/lite';
+
+export default {
+  data() {
+    return {
+      updatedNoteGrad: '',
+      updatedNoteNaziv: '',
+      updatedNoteText: '',
+      noteId: this.$route.params.id,
+    };
+  },
+  methods: {
     async fetchNoteData() {
       try {
-        const doc = await db.collection('notes').doc(this.noteId).get();
-        if (doc.exists) {
-          const data = doc.data();
-          // Postavite vrijednosti podataka bilješke u vaše inpute za uređivanje
+        const noteRef = doc(db, 'notes', this.noteId);
+        const docSnap = await getDoc(noteRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
           this.updatedNoteGrad = data.grad || '';
           this.updatedNoteNaziv = data.naziv_biljeske || '';
           this.updatedNoteText = data.tekst || '';
@@ -47,26 +50,33 @@
         console.error('Greška pri dohvatu podataka:', error);
       }
     },
-    async updateNote() {
+    async fetchNotes() {
       try {
-        // Ako želite osigurati da su podaci bilješke ažurirani prije nego što preusmjerite korisnika,
-        // možete pričekati da se ažuriranje završi prije preusmjeravanja
-        await db.collection('notes').doc(this.noteId).update({
+        // Ovdje zamijenite ovaj dio koda s vašom logikom za dohvaćanje kartica
+        console.log('Ovdje dohvatite podatke o karticama...');
+      } catch (error) {
+        console.error('Greška pri dohvatu podataka o karticama:', error);
+      }
+    },async updateNote() {
+      try {
+        const noteRef = doc(db, 'notes', this.noteId);
+        await updateDoc(noteRef, {
           grad: this.updatedNoteGrad,
           naziv_biljeske: this.updatedNoteNaziv,
           tekst: this.updatedNoteText,
         });
-
         console.log('Bilješka je uspješno ažurirana.');
-        // Ovdje možete postaviti logiku za preusmjeravanje korisnika na željenu rutu
+        await this.fetchNotes();
+        this.$router.push({ name: 'home' });//nakon izmjene idemo na naslovnicu
       } catch (error) {
         console.error('Greška pri ažuriranju bilješke:', error);
       }
     },
   },
+
   mounted() {
-    // Kada se komponenta mounta, dohvatite podatke bilješke iz baze
     this.fetchNoteData();
   },
 };
+
 </script>
