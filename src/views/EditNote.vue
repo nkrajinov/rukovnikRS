@@ -52,7 +52,6 @@ export default {
     },
     async fetchNotes() {
       try {
-        // Ovdje zamijenite ovaj dio koda s vašom logikom za dohvaćanje kartica
         console.log('Ovdje dohvatite podatke o karticama...');
       } catch (error) {
         console.error('Greška pri dohvatu podataka o karticama:', error);
