@@ -78,17 +78,18 @@ export default {
     async fetchNotes() {
       try {
         const notesSnapshot = await getDocs(this.notesCollectionRef);
-
         this.cards = [];
         notesSnapshot.forEach((doc) => {
-          this.cards.push(doc.data());
-        });
-
-        console.log('firebase dohvat...:', this.cards);
-      } catch (error) {
-        console.error('Greška u dohvatu:', error);
-      }
-    },
+        const noteData = doc.data();
+        const noteId = doc.id; // Dohvatite ID dokumenta
+        const noteWithId = { ...noteData, id: noteId }; // Dodajte ID u podatke bilješke
+        this.cards.push(noteWithId);
+       });
+       console.log('Firebase dohvat...', this.cards);
+     } catch (error) {
+      console.error('Greška u dohvatu:', error);
+   }
+  },
     async postNewNote() {
   console.log("OK");
 
