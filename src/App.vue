@@ -68,6 +68,7 @@
 import store from '@/store';
 import { auth } from '@/firebase';
 import router from '@/router';
+import { getAuth, signOut } from 'firebase/auth';
 
 auth.onAuthStateChanged((user) => {//detekcija promjene ulogiranosti
   const currentRoute = router.currentRoute;
@@ -102,26 +103,44 @@ export default {
   },
   methods: {
     logout() {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          this.$router.push({ name: 'login'});
-        });
-    },
+  const authInstance = getAuth(); // Dohvaćanje autentifikacijskog objekta
+  signOut(authInstance)
+    .then(() => {
+      store.currentUser = null; // Postavljanje korisnika na null nakon odjave
+      console.log('User signed out successfully');
+      router.push({ name: 'login' });
+    })
+    .catch((error) => {
+      console.error('Sign out error:', error);
+    });
+},
   },
 };
 </script>
 
 <style lang="scss">
-/* Vaš postojeći stil */
-
-/* Dodatni stil za dropdown izbornik */
 .dropdown-menu {
   display: none;
 }
 
 .dropdown-menu.show {
   display: block;
+}
+
+#app {
+  background-color: #FFEBEE;
+  color: #C62828;
+}
+
+.navbar {
+  background-color: #FFCDD2;
+  color: #C62828;
+}
+.navbar-nav .nav-item .nav-link,
+.dropdown-menu .nav-item .nav-link {
+  color: #C62828;
+}
+.dropdown-menu .nav-item .nav-link:hover {
+  color: #FF0000;
 }
 </style>
