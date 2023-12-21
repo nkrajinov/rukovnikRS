@@ -68,7 +68,7 @@
 import store from '@/store';
 import { auth } from '@/firebase';
 import router from '@/router';
-import { getAuth, signOut } from 'firebase/auth'; // Dodano
+import { getAuth, signOut } from 'firebase/auth';
 
 auth.onAuthStateChanged((user) => {
   const currentRoute = router.currentRoute;
@@ -97,20 +97,49 @@ export default {
   data() {
     return {
       store,
+      loggedIn: false,
     };
+  },
+  mounted() {
+    const self = this;
+
+    auth.onAuthStateChanged((user) => {
+      console.log('Provjera stanja logina.');
+      
+      if (user) {
+        console.log('***', user.email);
+        store.currentUser = user.email;
+        self.loggedIn = true;
+      } else {
+        console.log('No user');
+        store.currentUser = null;
+        self.loggedIn = false;
+      }
+
+      const currentRoute = self.$router.currentRoute;
+
+      if (currentRoute.meta && currentRoute.meta.needsUser !== undefined) {
+        if (self.loggedIn && !currentRoute.meta.needsUser) {
+          self.$router.push({ name: 'home' });
+        } else if (!self.loggedIn && currentRoute.meta.needsUser) {
+          self.$router.push({ name: 'login' });
+        }
+      }
+    });
   },
   methods: {
     logout() {
-      const authInstance = getAuth(); // Dohvaćanje autentifikacijskog objekta
-      signOut(authInstance)
-       .then(() => {
-        store.currentUser = null; // Postavljanje korisnika na null nakon odjave
-       console.log('User signed out successfully');
-       router.push({ name: 'login' });
+      const auth = getAuth();
+
+      signOut(auth)
+        .then(() => {
+          console.log('Korisnik je uspješno odjavljen.');
+          this.loggedIn = false;
+          this.$router.push({ name: 'login' });
         })
-       .catch((error) => {
-         console.error('Sign out error:', error);
-       });
+        .catch((error) => {
+          console.error('Došlo je do pogreške prilikom odjave:', error);
+        });
     },
   },
 };

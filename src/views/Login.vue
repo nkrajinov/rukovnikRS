@@ -1,22 +1,20 @@
 <template>
-  <div class="about">
-    <h1>This is a Login page</h1>
+  <div class="login">
+    <h1>Login Page</h1>
     <div class="container">
       <div class="row">
         <div class="col-sm"></div>
         <div class="col-sm">
-          <form>
+          <form @submit.prevent="login">
             <div class="form-group">
-              <label for="exampleInputEmail1">Email address</label>
-              <input type="email" v-model="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" />
-              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+              <label for="email">Email address</label>
+              <input type="email" v-model="email" class="form-control" id="email" placeholder="Enter email" required>
             </div>
             <div class="form-group">
-              <label for="exampleInputPassword1">Password</label>
-              <input type="password" v-model="password" class="form-control" id="exampleInputPassword1" placeholder="Password" />
+              <label for="password">Password</label>
+              <input type="password" v-model="password" class="form-control" id="password" placeholder="Password" required>
             </div>
-            <button type="button" @click="login()" class="btn btn-primary">Submit</button>
-            <button v-if="loggedIn" @click="logout()" class="btn btn-danger">Logout</button> <!-- Dodan uvjetni prikaz gumba za logout -->
+            <button type="submit" class="btn btn-primary">Login</button>
           </form>
         </div>
         <div class="col-sm"></div>
@@ -26,46 +24,40 @@
 </template>
 
 <script>
-import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { app } from '@/firebase';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { useRouter } from 'vue-router';
 
 export default {
-  name: "login",
+  name: 'Login',
   data() {
     return {
-      username: "",
-      password: "",
-      loggedIn: false,
+      email: '',
+      password: ''
     };
   },
   methods: {
-    login() {
-      const auth = getAuth(app);
-
-      signInWithEmailAndPassword(auth, this.username, this.password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log("Successful login", user);
-          this.loggedIn = true; // Označite korisnika kao prijavljenog
-          this.$router.push({ name: 'home' }); // Preusmjeri na početnu stranicu nakon uspješnog prijavljivanja
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-    },
-    logout() {
-  const authInstance = getAuth(); // Dohvaćanje autentifikacijskog objekta
-  signOut(authInstance)
-    .then(() => {
-      store.currentUser = null; // Postavljanje korisnika na null nakon odjave
-      console.log('User signed out successfully');
-      router.push({ name: 'login' });
-    })
-    .catch((error) => {
-      console.error('Sign out error:', error);
-    });
-},
-
-  },
-}
+    async login() {
+      try {
+        const auth = getAuth();
+        const { email, password } = this;
+        
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        // Uspješna prijava - preusmjeri korisnika na željenu stranicu (npr. Home)
+        const router = useRouter();
+        router.push({ name: 'Home' });
+      } catch (error) {
+        console.error('Login error:', error.message);
+        // Ovdje možete dodati prikaz poruke o grešci korisniku
+      }
+    }
+  }
+};
 </script>
+
+<style scoped>
+/* Stilizacija po želji */
+.login {
+  /* Stilizacija za login stranicu */
+}
+</style>
+
