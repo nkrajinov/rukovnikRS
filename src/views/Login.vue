@@ -54,19 +54,18 @@ export default {
         });
     },
     logout() {
-      const auth = getAuth(app);
+  const authInstance = getAuth(); // Dohvaćanje autentifikacijskog objekta
+  signOut(authInstance)
+    .then(() => {
+      store.currentUser = null; // Postavljanje korisnika na null nakon odjave
+      console.log('User signed out successfully');
+      router.push({ name: 'login' });
+    })
+    .catch((error) => {
+      console.error('Sign out error:', error);
+    });
+},
 
-      signOut(auth)
-        .then(() => {
-          this.loggedIn = false; // Označite korisnika kao odjavljenog
-          console.log("User signed out successfully");
-          // Ovdje možete dodati dodatne korake nakon odjave, poput preusmjeravanja korisnika na stranicu za prijavu
-          this.$router.push({ name: 'login' }); // Preusmjeri korisnika na stranicu za prijavu nakon odjave
-        })
-        .catch((error) => {
-          console.error('Sign out error:', error);
-        });
-    },
   },
 }
 </script>
