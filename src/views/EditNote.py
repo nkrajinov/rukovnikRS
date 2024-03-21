@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import Optional
@@ -70,3 +70,17 @@ async def delete_note(note_id: str):
             raise HTTPException(status_code=404, detail="Note not found")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# Dodajemo endpoint za čitanje svih bilješki za trenutnog korisnika
+@app.get("/user/notes/")
+async def read_user_notes(user_id: str = Depends(get_current_user)):
+    try:
+        notes = collection.find({"user_id": user_id})  # Filtriramo bilješke prema korisničkom identifikatoru
+        return list(notes)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Funkcija za provjeru autentikacije korisnika - ovu funkciju morate implementirati prema vašoj autentikacijskoj logici
+async def get_current_user():
+    # Ovdje implementirajte logiku za provjeru autentikacije i dobivanje ID-a trenutnog korisnika
+    return "user_id_123"  # Ovdje vrati stvarni ID trenutnog korisnika
