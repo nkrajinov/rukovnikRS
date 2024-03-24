@@ -1,8 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
-from pydantic import BaseModel
-from typing import Optional
+from auth import UserLogin
 
 app = FastAPI()
 
@@ -14,28 +13,6 @@ db = client["ime_vase_baze"]
 
 # Odabir kolekcije (tablice) za korisnike
 users_collection = db["users"]
-
-# Definiranje modela za prijavu
-class UserLogin(BaseModel):
-    username: str
-    password: str
-
-# Definiranje rutera za signup
-signup_router = APIRouter()
-
-@signup_router.post("/signup")
-async def signup(user: UserLogin):
-    # Provjerite je li korisničko ime već zauzeto
-    if users_collection.find_one({"username": user.username}):
-        raise HTTPException(status_code=400, detail="Korisničko ime već postoji")
-    
-    # Spremite korisnika u bazu podataka
-    users_collection.insert_one(user.dict())
-    
-    return {"message": "Uspješna registracija"}
-
-# Uključivanje rutera za signup u glavni router
-app.include_router(signup_router)
 
 # Omogućavanje CORS-a
 app.add_middleware(
@@ -51,13 +28,28 @@ app.add_middleware(
 async def home():
     return {"message": "Welcome to the homeview page!"}
 
-# Import za autentifikaciju
-from auth import login
+router = APIRouter()
 
-# Endpoint za prijavu
-@app.post("/login")
-async def login_endpoint(user: UserLogin):
-    return await login(user)
+@router.post("/signup")
+async def signup(user: UserLogin):
+    # Provjerite je li korisničko ime već zauzeto
+    if users_collection.find_one({"username": user.username}):
+        raise HTTPException(status_code=400, detail="Korisničko ime već postoji")
+    
+    # Spremite korisnika u bazu podataka
+    users_collection.insert_one(user.dict())
+    
+    return {"message": "Uspješna registracija"}
+
+@router.post("/login")
+async def login(user: UserLogin):
+    # Implementacija funkcije za prijavu
+    # Ovdje provjerite korisničko ime i lozinku u bazi podataka
+    # Vratite odgovarajući odgovor na temelju rezultata provjere
+    pass  # Dodajte implementaciju funkcije za prijavu
+
+# Uključivanje rutera iz modula signup
+app.include_router(router)
 
 if __name__ == "__main__":
     import uvicorn
