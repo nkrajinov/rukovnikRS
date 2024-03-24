@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import Optional
+from auth import get_current_user
 
 app = FastAPI()
 
@@ -18,10 +19,13 @@ class Note(BaseModel):
     grad: str
     naziv_biljeske: str
     tekst: str
+    user_id: Optional[str] = None  # Dodan user_id
 
 @app.post("/notes/")
-async def create_note(note: Note):
+async def create_note(note: Note, user_id: str = Depends(get_current_user)):
     try:
+        # Dodajte user_id u bilješku prije nego što je spremite
+        note.user_id = user_id
         result = collection.insert_one(note.dict())
         return {"message": "Note created successfully", "note_id": str(result.inserted_id)}
     except Exception as e:
@@ -79,8 +83,3 @@ async def read_user_notes(user_id: str = Depends(get_current_user)):
         return list(notes)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-# Funkcija za provjeru autentikacije korisnika - ovu funkciju morate implementirati prema vašoj autentikacijskoj logici
-async def get_current_user():
-    # Ovdje implementirajte logiku za provjeru autentikacije i dobivanje ID-a trenutnog korisnika
-    return "user_id_123"  # Ovdje vrati stvarni ID trenutnog korisnika

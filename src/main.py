@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import Optional
+from auth import UserLogin, login
 
 app = FastAPI()
 
@@ -11,46 +12,48 @@ client = MongoClient("mongodb://localhost:27017/")
 # Odabir baze podataka
 db = client["ime_vase_baze"]
 
-# Odabir kolekcije (tablice)
-collection = db["ime_vase_kolekcije"]
+# Odabir kolekcije (tablice) za bilješke
+collection = db["notes"]
 
-class Item(BaseModel):
-    name: str
-    description: Optional[str] = None
-    price: float
-    tax: Optional[float] = None
+class Note(BaseModel):
+    grad: str
+    naziv_biljeske: str
+    tekst: str
 
 @app.get("/")
 def read_root():
     return {"message": "Hello World"}
 
-@app.get("/items/{item_id}")
-def read_item(item_id: str):
-    item = collection.find_one({"_id": item_id})
-    if item:
-        return item
+@app.get("/notes/{note_id}")
+def read_note(note_id: str):
+    note = collection.find_one({"_id": note_id})
+    if note:
+        return note
     else:
-        return {"message": "Item not found"}
+        return {"message": "Note not found"}
 
-@app.post("/items/")
-def create_item(item: Item):
-    item_dict = item.dict()
-    result = collection.insert_one(item_dict)
-    return {"message": "Item created successfully", "item_id": str(result.inserted_id)}
+@app.post("/notes/")
+def create_note(note: Note):
+    result = collection.insert_one(note.dict())
+    return {"message": "Note created successfully", "note_id": str(result.inserted_id)}
 
-@app.put("/items/{item_id}")
-def update_item(item_id: str, item: Item):
-    item_dict = item.dict()
-    result = collection.replace_one({"_id": item_id}, item_dict)
+@app.put("/notes/{note_id}")
+def update_note(note_id: str, note: Note):
+    result = collection.replace_one({"_id": note_id}, note.dict())
     if result.modified_count:
-        return {"message": "Item updated successfully"}
+        return {"message": "Note updated successfully"}
     else:
-        return {"message": "Item not found"}
+        return {"message": "Note not found"}
 
-@app.delete("/items/{item_id}")
-def delete_item(item_id: str):
-    result = collection.delete_one({"_id": item_id})
+@app.delete("/notes/{note_id}")
+def delete_note(note_id: str):
+    result = collection.delete_one({"_id": note_id})
     if result.deleted_count:
-        return {"message": "Item deleted successfully"}
+        return {"message": "Note deleted successfully"}
     else:
-        return {"message": "Item not found"}
+        return {"message": "Note not found"}
+
+# Endpoint za prijavu
+@app.post("/login")
+async def login_endpoint(user: UserLogin):
+    return await login(user)
