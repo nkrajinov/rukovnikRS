@@ -1,7 +1,7 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
-from BACKEND.auth import UserLogin
+from auth import UserLogin
 
 app = FastAPI()
 

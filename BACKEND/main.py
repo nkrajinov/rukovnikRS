@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import Optional
-from BACKEND.auth import UserLogin, login
+from auth import UserLogin, login
 
 app = FastAPI()
 
