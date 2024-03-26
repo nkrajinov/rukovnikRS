@@ -1,7 +1,6 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI , Depends
 from pymongo import MongoClient
 from pydantic import BaseModel
-from typing import Optional
 from auth import login, get_current_user
 
 app = FastAPI()
@@ -23,19 +22,6 @@ class Note(BaseModel):
 @app.get("/")
 def read_root():
     return {"message": "Hello World"}
-
-@app.get("/user/notes/")
-async def read_user_notes(user: str = Depends(get_current_user)):
-    notes = collection.find({"user_id": user})
-    return list(notes)
-
-@app.get("/notes/{note_id}")
-def read_note(note_id: str):
-    note = collection.find_one({"_id": note_id})
-    if note:
-        return note
-    else:
-        return {"message": "Note not found"}
 
 @app.post("/notes")
 def create_note(note: Note):
@@ -59,7 +45,6 @@ def delete_note(note_id: str):
     else:
         return {"message": "Note not found"}
 
-# Endpoint za prijavu
-@app.post("/login")
-async def login_endpoint(user: dict):
-    return await login(user)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

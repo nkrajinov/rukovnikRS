@@ -1,11 +1,11 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException , Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pydantic import BaseModel
 from passlib.context import CryptContext
-from database import db, kartice_collection , users_collection
+from database import db, kartice_collection, users_collection
 from jwt import encode
-from auth import JWT_SECRET_KEY, ALGORITHM
+from auth import JWT_SECRET_KEY, ALGORITHM, login, get_current_user
 
 app = FastAPI()
 
@@ -74,6 +74,11 @@ def create_note(note: Note):
 
 # Uključivanje rutera iz modula signup
 app.include_router(router)
+
+@app.get("/user/notes/")
+async def read_user_notes(user: str = Depends(get_current_user)):
+    notes = kartice_collection.find({"user_id": user})
+    return list(notes)
 
 if __name__ == "__main__":
     import uvicorn
