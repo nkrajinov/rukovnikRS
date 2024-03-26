@@ -10,10 +10,10 @@ app = FastAPI()
 client = MongoClient("mongodb://localhost:27017/")
 
 # Odabir baze podataka
-db = client["ime_vase_baze"]
+db = client["rukovnikbaza"]
 
 # Odabir kolekcije (tablice) za bilješke
-collection = db["notes"]
+collection = db["kartice"]
 
 class Note(BaseModel):
     grad: str

@@ -7,10 +7,10 @@ from typing import Optional
 client = MongoClient("mongodb://localhost:27017/")
 
 # Odabir baze podataka
-db = client["ime_vase_baze"]
+db = client["rukovnikbaza"]
 
 # Odabir kolekcije (tablice) za korisnike
-users_collection = db["users"]
+users_collection = db["korisnici"]
 
 # Model za prijavu
 class UserLogin(BaseModel):
