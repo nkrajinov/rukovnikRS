@@ -2,23 +2,12 @@ from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pydantic import BaseModel
-from passlib.context import CryptContext  # Dodajte ovaj import
-from auth import JWT_SECRET_KEY, ALGORITHM
+from passlib.context import CryptContext
+from database import db, kartice_collection , users_collection
 from jwt import encode
+from auth import JWT_SECRET_KEY, ALGORITHM
 
 app = FastAPI()
-
-# Uspostavljanje veze s MongoDB serverom
-client = MongoClient("mongodb://localhost:27017/")
-
-# Odabir baze podataka
-db = client["rukovnikbaza"]
-
-# Odabir kolekcije (tablice) za korisnike
-users_collection = db["korisnici"]
-
-# Odabir kolekcije (tablice) za kartice
-kartice_collection = db["kartice"]
 
 # Definicija konteksta lozinke
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

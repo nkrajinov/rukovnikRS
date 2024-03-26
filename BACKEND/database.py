@@ -7,7 +7,7 @@ client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["rukovnikbaza"]
 
 # Odabir kolekcije (tablice) za korisnike
-korisnici_collection = db["korisnici"]
+users_collection = db["korisnici"]
 
 # Odabir kolekcije (tablice) za kartice
 kartice_collection = db["kartice"]

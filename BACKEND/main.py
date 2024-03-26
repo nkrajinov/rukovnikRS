@@ -1,8 +1,8 @@
-from fastapi import FastAPI , Depends
+from fastapi import FastAPI, Depends
 from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import Optional
-from auth import UserLogin, login , get_current_user
+from auth import UserLogin, login, get_current_user
 
 app = FastAPI()
 

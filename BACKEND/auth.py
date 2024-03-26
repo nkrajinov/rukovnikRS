@@ -1,25 +1,14 @@
 from fastapi import HTTPException , Depends
-from pymongo import MongoClient
-from pydantic import BaseModel
 from jwt import PyJWTError, decode, encode
-from typing import Optional
-from passlib.context import CryptContext
-from auth import JWT_SECRET_KEY, ALGORITHM
 from fastapi.security import OAuth2PasswordBearer
+from passlib.context import CryptContext
+from pydantic import BaseModel
+from database import users_collection
+from main import UserLogin
 
-# Uspostavljanje veze s MongoDB serverom
-client = MongoClient("mongodb://localhost:27017/")
-
-# Odabir baze podataka
-db = client["rukovnikbaza"]
-
-# Odabir kolekcije (tablice) za korisnike
-users_collection = db["korisnici"]
-
-# Model za prijavu
-class UserLogin(BaseModel):
-    username: str
-    password: str
+# Definicija algoritma i tajnog ključa
+ALGORITHM = "HS256"
+JWT_SECRET_KEY = "your_secret_key_here"
 
 # Funkcija za provjeru lozinke
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
