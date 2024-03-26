@@ -32,9 +32,10 @@ def read_note(note_id: str):
     else:
         return {"message": "Note not found"}
 
-@app.post("/notes/")
+@app.post("/notes")
 def create_note(note: Note):
-    result = collection.insert_one(note.dict())
+    note_data = note.dict(by_alias=True, exclude_unset=True)
+    result = collection.insert_one(note_data)
     return {"message": "Note created successfully", "note_id": str(result.inserted_id)}
 
 @app.put("/notes/{note_id}")

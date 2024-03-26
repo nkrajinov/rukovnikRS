@@ -1,12 +1,15 @@
 import pymongo
 
 # Povezivanje s MongoDB serverom
-# Zamijenite "mongodb://localhost:27017/" sa svojim URL-om dobivenim iz MongoDB Compassa
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 
 # Odabir baze podataka
-db = client["ime_vase_baze"]
+db = client["rukovnikbaza"]
 
-# Odabir kolekcije (tablice)
-collection = db["ime_vase_kolekcije"]
+# Odabir kolekcije (tablice) za korisnike
+korisnici_collection = db["korisnici"]
+
+# Odabir kolekcije (tablice) za kartice
+kartice_collection = db["kartice"]
+
 print("database.py je uspješno izvršena.")
