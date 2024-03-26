@@ -3,6 +3,8 @@ from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import Optional
 from auth import UserLogin, login
+from fastapi import Depends
+from auth import get_current_user
 
 app = FastAPI()
 
@@ -23,6 +25,11 @@ class Note(BaseModel):
 @app.get("/")
 def read_root():
     return {"message": "Hello World"}
+
+@app.get("/user/notes/")
+async def read_user_notes(user: str = Depends(get_current_user)):
+    notes = collection.find({"user_id": user})
+    return list(notes)
 
 @app.get("/notes/{note_id}")
 def read_note(note_id: str):
