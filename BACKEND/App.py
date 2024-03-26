@@ -2,7 +2,9 @@ from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pydantic import BaseModel
-from typing import Optional
+from passlib.context import CryptContext  # Dodajte ovaj import
+from auth import JWT_SECRET_KEY, ALGORITHM
+from jwt import encode
 
 app = FastAPI()
 
@@ -17,6 +19,9 @@ users_collection = db["korisnici"]
 
 # Odabir kolekcije (tablice) za kartice
 kartice_collection = db["kartice"]
+
+# Definicija konteksta lozinke
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Omogućavanje CORS-a
 app.add_middleware(
@@ -54,12 +59,24 @@ async def signup(user: UserLogin):
     
     return {"message": "Uspješna registracija"}
 
+ # Implementacija funkcije za prijavu
 @router.post("/login")
 async def login(user: UserLogin):
-    # Implementacija funkcije za prijavu
-    # Ovdje provjerite korisničko ime i lozinku u bazi podataka
-    # Vratite odgovarajući odgovor na temelju rezultata provjere
-    pass  # Dodajte implementaciju funkcije za prijavu
+   # Pronađi korisnika u bazi podataka prema korisničkom imenu
+    user_data = users_collection.find_one({"username": user.username})
+    
+    # Provjeri postoji li korisnik s tim korisničkim imenom
+    if not user_data:
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    
+    # Provjeri odgovara li unesena lozinka lozinci spremljenoj u bazi podataka
+    if not pwd_context.verify(user.password, user_data["password"]):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    
+    # Generiraj JWT token
+    token = encode({"sub": user.username}, JWT_SECRET_KEY, algorithm=ALGORITHM)
+    
+    return {"access_token": token, "token_type": "bearer"}
 
 @app.post("/notes/")
 def create_note(note: Note):

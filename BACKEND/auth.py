@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from jwt import PyJWTError, decode, encode
 from typing import Optional
 from passlib.context import CryptContext
-from . import JWT_SECRET_KEY, ALGORITHM
+from auth import JWT_SECRET_KEY, ALGORITHM
 from fastapi.security import OAuth2PasswordBearer
 
 # Uspostavljanje veze s MongoDB serverom
