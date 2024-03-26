@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 from pymongo import MongoClient
 from pydantic import BaseModel
-from typing import Optional
 
 # Uspostavljanje veze s MongoDB serverom
 client = MongoClient("mongodb://localhost:27017/")

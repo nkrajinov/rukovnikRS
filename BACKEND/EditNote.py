@@ -13,7 +13,7 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client["rukovnikbaza"]
 
 # Odabir kolekcije (tablice)
-collection = db["korisnici"]
+collection = db["kartice"]
 
 class Note(BaseModel):
     grad: str
