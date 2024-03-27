@@ -1,9 +1,9 @@
-# U auth.py
 from fastapi import HTTPException , Depends
 from jwt import PyJWTError, decode, encode
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from pydantic import BaseModel
+from models import UserLogin
 from database import users_collection
 
 # Definicija algoritma i tajnog ključa
@@ -12,16 +12,12 @@ JWT_SECRET_KEY = "your_secret_key_here"
 
 # Funkcija za provjeru lozinke
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Funkcija za prijavu korisnika
-async def login(user_data: dict):  # Promijenjeno ime argumenta u user_data
-    # Ovdje uvezite UserLogin
-    from main import UserLogin
-    user = UserLogin(**user_data)
-    user_data_db = users_collection.find_one({"username": user.username})
-    if user_data_db and pwd_context.verify(user.password, user_data_db["password"]):
+async def login(user: UserLogin):
+    user_data = users_collection.find_one({"username": user.username})
+    if user_data and pwd_context.verify(user.password, user_data["password"]):
         return {"message": "Login successful"}
     else:
         raise HTTPException(status_code=401, detail="Invalid username or password")

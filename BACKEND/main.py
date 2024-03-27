@@ -1,7 +1,7 @@
-from fastapi import FastAPI , Depends
+from fastapi import FastAPI
 from pymongo import MongoClient
 from pydantic import BaseModel
-from auth import login, get_current_user
+from models import Note  # Dodano uvoz za model Note
 
 app = FastAPI()
 
@@ -13,11 +13,6 @@ db = client["rukovnikbaza"]
 
 # Odabir kolekcije (tablice) za bilješke
 collection = db["kartice"]
-
-class Note(BaseModel):
-    grad: str
-    naziv_biljeske: str
-    tekst: str
 
 @app.get("/")
 def read_root():

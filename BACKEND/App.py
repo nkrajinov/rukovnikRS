@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pydantic import BaseModel
 from passlib.context import CryptContext
+from models import Note, UserLogin
 from database import db, kartice_collection, users_collection
 from jwt import encode
 from auth import JWT_SECRET_KEY, ALGORITHM, login, get_current_user
@@ -20,15 +21,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-class UserLogin(BaseModel):
-    username: str
-    password: str
-
-class Note(BaseModel):
-    grad: str
-    naziv_biljeske: str
-    tekst: str
 
 # Endpoint za homeview stranicu
 @app.get("/home")
