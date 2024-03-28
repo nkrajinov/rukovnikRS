@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import Optional
 from auth import get_current_user
+from bson import ObjectId  # Dodali smo uvoz za pretvaranje stringa u ObjectId
 
 app = FastAPI()
 
@@ -26,7 +27,7 @@ async def create_note(note: Note, user_id: str = Depends(get_current_user)):
     try:
         # Dodajte user_id u bilješku prije nego što je spremite
         note.user_id = user_id
-        result = collection.insert_one(note.dict())
+        result = collection.insert_one(note.model_dump())  # Zamijenjeno note.dict() s note.model_dump()
         return {"message": "Note created successfully", "note_id": str(result.inserted_id)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -34,7 +35,9 @@ async def create_note(note: Note, user_id: str = Depends(get_current_user)):
 @app.get("/notes/{note_id}")
 async def read_note(note_id: str):
     try:
-        note = collection.find_one({"_id": note_id})
+        # Pretvorite note_id u ObjectId jer MongoDB koristi ObjectId za _id polje
+        object_id = ObjectId(note_id)
+        note = collection.find_one({"_id": object_id})
         if note:
             return note
         else:
@@ -45,7 +48,13 @@ async def read_note(note_id: str):
 @app.put("/notes/{note_id}")
 async def update_note(note_id: str, note: Note):
     try:
-        result = collection.replace_one({"_id": note_id}, note.dict())
+        # Pretvorite note_id u ObjectId jer MongoDB koristi ObjectId za _id polje
+        object_id = ObjectId(note_id)
+        
+        # Koristite replace_one metodu kako biste zamijenili postojeći dokument s novim
+        result = collection.replace_one({"_id": object_id}, note.model_dump(by_alias=True))  # Zamijenjeno note.dict() s note.model_dump()
+        
+        # Provjerite je li dokument uspješno ažuriran
         if result.modified_count:
             return {"message": "Note updated successfully"}
         else:
@@ -56,7 +65,7 @@ async def update_note(note_id: str, note: Note):
 @app.patch("/notes/{note_id}")
 async def update_note_partial(note_id: str, updated_note: dict):
     try:
-        result = collection.update_one({"_id": note_id}, {"$set": updated_note})
+        result = collection.update_one({"_id": ObjectId(note_id)}, {"$set": updated_note})
         if result.modified_count:
             return {"message": "Note updated successfully"}
         else:
@@ -67,7 +76,7 @@ async def update_note_partial(note_id: str, updated_note: dict):
 @app.delete("/notes/{note_id}")
 async def delete_note(note_id: str):
     try:
-        result = collection.delete_one({"_id": note_id})
+        result = collection.delete_one({"_id": ObjectId(note_id)})
         if result.deleted_count:
             return {"message": "Note deleted successfully"}
         else:
@@ -83,3 +92,7 @@ async def read_user_notes(user_id: str = Depends(get_current_user)):
         return list(notes)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

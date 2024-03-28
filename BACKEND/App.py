@@ -59,7 +59,7 @@ async def login(user: UserLogin):
 
 @app.post("/notes/")
 def create_note(note: Note):
-    result = kartice_collection.insert_one(note.dict())
+    result = kartice_collection.insert_one(note.model_dump())
     return {"message": "Note created successfully", "note_id": str(result.inserted_id)}
 
 # Uključivanje rutera iz modula signup

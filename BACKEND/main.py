@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from pymongo import MongoClient
 from pydantic import BaseModel
 from models import Note  # Dodano uvoz za model Note
+from bson import ObjectId  # Dodano za pretvaranje stringa u ObjectId
 
 app = FastAPI()
 
@@ -24,13 +25,25 @@ def create_note(note: Note):
     result = collection.insert_one(note_data)
     return {"message": "Note created successfully", "note_id": str(result.inserted_id)}
 
+from bson import ObjectId  # Dodano za pretvaranje stringa u ObjectId
+
 @app.put("/notes/{note_id}")
 def update_note(note_id: str, note: Note):
-    result = collection.replace_one({"_id": note_id}, note.dict())
-    if result.modified_count:
-        return {"message": "Note updated successfully"}
-    else:
-        return {"message": "Note not found"}
+    try:
+        # Pretvorite note_id u ObjectId jer MongoDB koristi ObjectId za _id polje
+        object_id = ObjectId(note_id)
+        
+        # Koristite replace_one metodu kako biste zamijenili postojeći dokument s novim
+        result = collection.replace_one({"_id": object_id}, note.dict(by_alias=True))
+        
+        # Provjerite je li dokument uspješno ažuriran
+        if result.modified_count:
+            return {"message": "Note updated successfully"}
+        else:
+            return {"message": "Note not found"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.patch("/notes/{note_id}")
 def update_note_partial(note_id: str, updated_note: dict):
