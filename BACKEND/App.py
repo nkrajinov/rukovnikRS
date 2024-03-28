@@ -1,17 +1,12 @@
-from fastapi import FastAPI, APIRouter, HTTPException , Depends
+from fastapi import FastAPI, APIRouter, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pymongo import MongoClient
 from pydantic import BaseModel
-from passlib.context import CryptContext
-from models import Note, UserLogin
-from database import db, kartice_collection, users_collection
 from jwt import encode
-from auth import JWT_SECRET_KEY, ALGORITHM, login, get_current_user
+from auth import JWT_SECRET_KEY, ALGORITHM, login, get_current_user, myctx  # Dodali smo myctx iz auth.py
+from database import db, kartice_collection, users_collection
+from models import Note, UserLogin
 
 app = FastAPI()
-
-# Definicija konteksta lozinke
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Omogućavanje CORS-a
 app.add_middleware(
@@ -35,15 +30,18 @@ async def signup(user: UserLogin):
     if users_collection.find_one({"username": user.username}):
         raise HTTPException(status_code=400, detail="Korisničko ime već postoji")
     
+    # Hashirajte lozinku prije spremanja u bazu podataka
+    hashed_password = myctx.hash(user.password)
+    
     # Spremite korisnika u bazu podataka
-    users_collection.insert_one(user.dict())
+    users_collection.insert_one({"username": user.username, "password": hashed_password})
     
     return {"message": "Uspješna registracija"}
 
- # Implementacija funkcije za prijavu
+# Implementacija funkcije za prijavu
 @router.post("/login")
 async def login(user: UserLogin):
-   # Pronađi korisnika u bazi podataka prema korisničkom imenu
+    # Pronađi korisnika u bazi podataka prema korisničkom imenu
     user_data = users_collection.find_one({"username": user.username})
     
     # Provjeri postoji li korisnik s tim korisničkim imenom
@@ -51,7 +49,7 @@ async def login(user: UserLogin):
         raise HTTPException(status_code=401, detail="Invalid username or password")
     
     # Provjeri odgovara li unesena lozinka lozinci spremljenoj u bazi podataka
-    if not pwd_context.verify(user.password, user_data["password"]):
+    if not myctx.verify(user.password, user_data["password"]):  # Promijenili smo pwd_context u myctx
         raise HTTPException(status_code=401, detail="Invalid username or password")
     
     # Generiraj JWT token

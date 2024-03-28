@@ -1,4 +1,4 @@
-from fastapi import HTTPException , Depends
+from fastapi import HTTPException, Depends
 from jwt import PyJWTError, decode, encode
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
@@ -10,14 +10,16 @@ from database import users_collection
 ALGORITHM = "HS256"
 JWT_SECRET_KEY = "your_secret_key_here"
 
-# Funkcija za provjeru lozinke
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Definicija algoritama za hashiranje lozinke
+myctx = CryptContext(schemes=["sha256_crypt", "ldap_salted_md5"])
+
+# OAuth2 password bearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# Funkcija za prijavu korisnika
+# Funkcija za provjeru lozinke
 async def login(user: UserLogin):
     user_data = users_collection.find_one({"username": user.username})
-    if user_data and pwd_context.verify(user.password, user_data["password"]):
+    if user_data and myctx.verify(user.password, user_data["password"]):
         return {"message": "Login successful"}
     else:
         raise HTTPException(status_code=401, detail="Invalid username or password")
