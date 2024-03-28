@@ -1,0 +1,17 @@
+POST
+{
+    "grad": " ",
+    "naziv_biljeske": " ",
+    "tekst": " ",
+    "user_id": "neki_id"
+}
+
+PUT
+{
+    "grad": " ",
+    "naziv_biljeske": " ",
+    "tekst": " ",
+    "user_id": "<your_user_id>"
+}
+
+DELETE

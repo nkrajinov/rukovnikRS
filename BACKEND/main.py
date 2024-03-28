@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends
 from pymongo import MongoClient
 from pydantic import BaseModel
 from models import Note  # Dodano uvoz za model Note
@@ -27,6 +27,14 @@ def create_note(note: Note):
 @app.put("/notes/{note_id}")
 def update_note(note_id: str, note: Note):
     result = collection.replace_one({"_id": note_id}, note.dict())
+    if result.modified_count:
+        return {"message": "Note updated successfully"}
+    else:
+        return {"message": "Note not found"}
+
+@app.patch("/notes/{note_id}")
+def update_note_partial(note_id: str, updated_note: dict):
+    result = collection.update_one({"_id": note_id}, {"$set": updated_note})
     if result.modified_count:
         return {"message": "Note updated successfully"}
     else:
