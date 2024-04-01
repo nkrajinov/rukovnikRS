@@ -59,7 +59,7 @@ async def login(user: UserLogin):
     
     return {"access_token": token, "token_type": "bearer"}
 
-# Uključivanje rutera iz modula signup
+# Uključivanje rutera
 app.include_router(router)
 
 if __name__ == "__main__":

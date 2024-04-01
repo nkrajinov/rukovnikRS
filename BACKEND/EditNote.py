@@ -28,7 +28,10 @@ async def create_note(note: Note, user_id: str = Depends(get_current_user)):
     try:
         # Dodajte user_id u bilješku prije nego što je spremite
         note.user_id = user_id
-        result = collection.insert_one(note.model_dump())  # Zamijenjeno note.dict() s note.model_dump()
+        # Uklonite _id iz rezultata koji se sprema u bazu
+        note_dict = note.model_dump()
+        note_dict.pop("_id", None)
+        result = collection.insert_one(note_dict)
         return {"message": "Note created successfully", "note_id": str(result.inserted_id)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -38,7 +41,8 @@ async def read_note(note_id: str):
     try:
         # Pretvorite note_id u ObjectId jer MongoDB koristi ObjectId za _id polje
         object_id = ObjectId(note_id)
-        note = collection.find_one({"_id": object_id})
+        # Uklonite _id iz rezultata koji se dohvaća iz baze
+        note = collection.find_one({"_id": object_id}, {"_id": 0})
         if note:
             return note
         else:
@@ -89,9 +93,16 @@ async def delete_note(note_id: str):
 @router.get("/user/notes/")
 async def read_user_notes(user_id: str = Depends(get_current_user)):
     try:
-        notes = collection.find({"user_id": user_id})  # Filtriramo bilješke prema korisničkom identifikatoru
-        # Konvertiramo rezultate u listu Python rječnika
-        notes_list = [note for note in notes]
+        # Filtriramo bilješke prema korisničkom identifikatoru
+        notes_cursor = collection.find({"user_id": user_id})
+        
+        # Inicijaliziramo praznu listu za spremanje bilješki
+        notes_list = []
+        
+        # Iteriramo kroz kursor i dodajemo svaku bilješku u listu
+        for note in notes_cursor:
+            notes_list.append(note)
+        
         # Vraćamo konvertiranu listu bilješki
         return notes_list
     except Exception as e:
