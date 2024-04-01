@@ -93,16 +93,9 @@ async def delete_note(note_id: str):
 @router.get("/user/notes/")
 async def read_user_notes(user_id: str = Depends(get_current_user)):
     try:
-        # Filtriramo bilješke prema korisničkom identifikatoru
-        notes_cursor = collection.find({"user_id": user_id})
-        
-        # Inicijaliziramo praznu listu za spremanje bilješki
-        notes_list = []
-        
-        # Iteriramo kroz kursor i dodajemo svaku bilješku u listu
-        for note in notes_cursor:
-            notes_list.append(note)
-        
+        notes = collection.find({"user_id": user_id})  # Filtriramo bilješke prema korisničkom identifikatoru
+        # Konvertiramo rezultate u listu Python rječnika
+        notes_list = [dict(note) for note in notes]  # Pretvaranje objekata u rječnike
         # Vraćamo konvertiranu listu bilješki
         return notes_list
     except Exception as e:
