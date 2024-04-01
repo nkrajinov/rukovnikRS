@@ -5,6 +5,7 @@ from jwt import encode
 from auth import JWT_SECRET_KEY, ALGORITHM, login, get_current_user, myctx  # Dodali smo myctx iz auth.py
 from database import db, users_collection
 from models import UserLogin
+from EditNote import router as edit_note_router
 
 app = FastAPI()
 
@@ -23,6 +24,7 @@ async def home():
     return {"message": "Welcome to the homeview page!"}
 
 router = APIRouter()  # Ovdje smo definirali router
+app.include_router(edit_note_router)
 
 @router.post("/signup")
 async def signup(user: UserLogin):

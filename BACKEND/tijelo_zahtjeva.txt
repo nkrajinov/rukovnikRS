@@ -6,6 +6,11 @@ POST
     "user_id": "neki_id"
 }
 
+{
+    "username": "ime_korisnika",
+    "password": "lozinka_korisnika"
+}
+
 
 PUT
 {
