@@ -1,23 +1,19 @@
+POST PUT 
+{
+    "grad": " ",
+    "naziv_biljeske": " ",
+    "tekst": " "
+}
+
 POST
 {
-    "grad": " ",
-    "naziv_biljeske": " ",
-    "tekst": " ",
-    "user_id": "neki_id"
+    "username": " ",
+    "password": " "
 }
 
+PATCH
 {
-    "username": "ime_korisnika",
-    "password": "lozinka_korisnika"
-}
-
-
-PUT
-{
-    "grad": " ",
     "naziv_biljeske": " ",
-    "tekst": " ",
-    "user_id": "<your_user_id>"
+    "tekst": " "
 }
-
-DELETE
+DELETE - samo note_id
