@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 from auth import get_current_user
 from bson import ObjectId  # Dodali smo uvoz za pretvaranje stringa u ObjectId
+from bson.json_util import dumps
 
 router = APIRouter()
 
@@ -89,6 +90,9 @@ async def delete_note(note_id: str):
 async def read_user_notes(user_id: str = Depends(get_current_user)):
     try:
         notes = collection.find({"user_id": user_id})  # Filtriramo bilješke prema korisničkom identifikatoru
-        return list(notes)
+        # Konvertiramo rezultate u listu Python rječnika
+        notes_list = [note for note in notes]
+        # Vraćamo konvertiranu listu bilješki
+        return notes_list
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
