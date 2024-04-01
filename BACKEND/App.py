@@ -1,10 +1,10 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, APIRouter  # Dodali smo APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from jwt import encode
 from auth import JWT_SECRET_KEY, ALGORITHM, login, get_current_user, myctx  # Dodali smo myctx iz auth.py
-from database import db, kartice_collection, users_collection
-from models import Note, UserLogin
+from database import db, users_collection
+from models import UserLogin
 
 app = FastAPI()
 
@@ -22,7 +22,7 @@ app.add_middleware(
 async def home():
     return {"message": "Welcome to the homeview page!"}
 
-router = APIRouter()
+router = APIRouter()  # Ovdje smo definirali router
 
 @router.post("/signup")
 async def signup(user: UserLogin):
@@ -57,18 +57,8 @@ async def login(user: UserLogin):
     
     return {"access_token": token, "token_type": "bearer"}
 
-@app.post("/notes/")
-def create_note(note: Note):
-    result = kartice_collection.insert_one(note.model_dump())
-    return {"message": "Note created successfully", "note_id": str(result.inserted_id)}
-
 # Uključivanje rutera iz modula signup
 app.include_router(router)
-
-@app.get("/user/notes/")
-async def read_user_notes(user: str = Depends(get_current_user)):
-    notes = kartice_collection.find({"user_id": user})
-    return list(notes)
 
 if __name__ == "__main__":
     import uvicorn

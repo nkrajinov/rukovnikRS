@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import pymongo
-from models import Note  # Dodano uvoz za model Note
+from models import Note
 
 # Povezivanje s MongoDB serverom
 client = pymongo.MongoClient("mongodb://localhost:27017/")

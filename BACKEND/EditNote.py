@@ -1,11 +1,11 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import Optional
 from auth import get_current_user
 from bson import ObjectId  # Dodali smo uvoz za pretvaranje stringa u ObjectId
 
-app = FastAPI()
+router = APIRouter()
 
 # Uspostavljanje veze s MongoDB serverom
 client = MongoClient("mongodb://localhost:27017/")
@@ -22,7 +22,7 @@ class Note(BaseModel):
     tekst: str
     user_id: Optional[str] = None  # Dodan user_id
 
-@app.post("/notes/")
+@router.post("/notes/")
 async def create_note(note: Note, user_id: str = Depends(get_current_user)):
     try:
         # Dodajte user_id u bilješku prije nego što je spremite
@@ -32,7 +32,7 @@ async def create_note(note: Note, user_id: str = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/notes/{note_id}")
+@router.get("/notes/{note_id}")
 async def read_note(note_id: str):
     try:
         # Pretvorite note_id u ObjectId jer MongoDB koristi ObjectId za _id polje
@@ -45,7 +45,7 @@ async def read_note(note_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.put("/notes/{note_id}")
+@router.put("/notes/{note_id}")
 async def update_note(note_id: str, note: Note):
     try:
         # Pretvorite note_id u ObjectId jer MongoDB koristi ObjectId za _id polje
@@ -62,7 +62,7 @@ async def update_note(note_id: str, note: Note):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.patch("/notes/{note_id}")
+@router.patch("/notes/{note_id}")
 async def update_note_partial(note_id: str, updated_note: dict):
     try:
         result = collection.update_one({"_id": ObjectId(note_id)}, {"$set": updated_note})
@@ -73,7 +73,7 @@ async def update_note_partial(note_id: str, updated_note: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.delete("/notes/{note_id}")
+@router.delete("/notes/{note_id}")
 async def delete_note(note_id: str):
     try:
         result = collection.delete_one({"_id": ObjectId(note_id)})
@@ -85,14 +85,10 @@ async def delete_note(note_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Dodajemo endpoint za čitanje svih bilješki za trenutnog korisnika
-@app.get("/user/notes/")
+@router.get("/user/notes/")
 async def read_user_notes(user_id: str = Depends(get_current_user)):
     try:
         notes = collection.find({"user_id": user_id})  # Filtriramo bilješke prema korisničkom identifikatoru
         return list(notes)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)

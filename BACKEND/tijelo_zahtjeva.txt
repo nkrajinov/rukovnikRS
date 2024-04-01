@@ -6,6 +6,7 @@ POST
     "user_id": "neki_id"
 }
 
+
 PUT
 {
     "grad": " ",
