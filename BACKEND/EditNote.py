@@ -101,3 +101,27 @@ async def read_user_notes(user_id: str = Depends(get_current_user)):
         return notes_list
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to read user notes: {str(e)}")
+@router.post("/notes/search/")
+async def search_notes(keyword: str):
+    try:
+        # Pretraži sve bilješke koje sadrže ključni pojam u poljima "grad", "naziv_biljeske" i "tekst"
+        search_results = collection.find({
+            "$or": [
+                {"grad": {"$regex": keyword, "$options": "i"}},
+                {"naziv_biljeske": {"$regex": keyword, "$options": "i"}},
+                {"tekst": {"$regex": keyword, "$options": "i"}}
+            ]
+        })
+
+        # Konvertiraj rezultate u listu Python rječnika, izbacujući "_id" polje
+        search_results_list = []
+        for note in search_results:
+            note_dict = dict(note)
+            note_dict.pop("_id", None)
+            search_results_list.append(note_dict)
+
+        # Vrati rezultate pretrage
+        return search_results_list
+    except Exception as e:
+        error_message = f"Failed to search notes: {str(e)}"
+        raise HTTPException(status_code=500, detail=error_message)
