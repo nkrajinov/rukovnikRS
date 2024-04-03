@@ -1,8 +1,9 @@
 POST PUT 
 {
-    "grad": " ",
-    "naziv_biljeske": " ",
-    "tekst": " "
+    "grad": "Grad",
+    "naziv_biljeske": "Naziv bilješke",
+    "tekst": "Tekst bilješke",
+    "user_id": "id_korisnika"
 }
 
 POST

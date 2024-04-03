@@ -8,3 +8,4 @@ class Note(BaseModel):
     grad: str
     naziv_biljeske: str
     tekst: str
+    user_id: str

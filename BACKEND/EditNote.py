@@ -29,7 +29,7 @@ async def create_note(note: Note, user_id: str = Depends(get_current_user)):
         result = collection.insert_one(note_dict)
         return {"message": "Note created successfully", "note_id": str(result.inserted_id)}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Failed to create note: {str(e)}")
 
 @router.get("/notes/{note_id}")
 async def read_note(note_id: str):
@@ -84,14 +84,20 @@ async def delete_note(note_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Dodajemo endpoint za čitanje svih bilješki za trenutnog korisnika
 @router.get("/user/notes/")
 async def read_user_notes(user_id: str = Depends(get_current_user)):
     try:
-        notes = collection.find({"user_id": user_id})  # Filtriramo bilješke prema korisničkom identifikatoru
-        # Konvertiramo rezultate u listu Python rječnika
-        notes_list = [dict(note) for note in notes]  # Pretvaranje objekata u rječnike
-        # Vraćamo konvertiranu listu bilješki
+        # Dobij sve bilješke korisnika iz baze podataka
+        notes = collection.find({"user_id": user_id})
+
+        # Konvertiraj rezultate u listu Python rječnika, izbacujući "_id" polje
+        notes_list = []
+        for note in notes:
+            note_dict = dict(note)
+            note_dict.pop("_id", None)
+            notes_list.append(note_dict)
+
+        # Vrati listu bilješki korisnika
         return notes_list
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Failed to read user notes: {str(e)}")
