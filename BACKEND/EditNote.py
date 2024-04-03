@@ -101,7 +101,7 @@ async def read_user_notes(user_id: str = Depends(get_current_user)):
         return notes_list
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to read user notes: {str(e)}")
-@router.post("/notes/search/")
+@router.get("/notes/search/")
 async def search_notes(keyword: str):
     try:
         # Pretraži sve bilješke koje sadrže ključni pojam u poljima "grad", "naziv_biljeske" i "tekst"
