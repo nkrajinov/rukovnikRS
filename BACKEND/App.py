@@ -1,8 +1,8 @@
-from fastapi import FastAPI, HTTPException, Depends, APIRouter  # Dodali smo APIRouter
+from fastapi import FastAPI, HTTPException, Depends, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from jwt import encode
-from auth import JWT_SECRET_KEY, ALGORITHM, login, get_current_user, myctx  # Dodali smo myctx iz auth.py
+from auth import JWT_SECRET_KEY, ALGORITHM, login, get_current_user, myctx
 from database import db, users_collection
 from models import UserLogin
 from EditNote import router as edit_note_router
@@ -51,7 +51,7 @@ async def login(user: UserLogin):
         raise HTTPException(status_code=401, detail="Invalid username or password")
     
     # Provjeri odgovara li unesena lozinka lozinci spremljenoj u bazi podataka
-    if not myctx.verify(user.password, user_data["password"]):  # Promijenili smo pwd_context u myctx
+    if not myctx.verify(user.password, user_data["password"]):
         raise HTTPException(status_code=401, detail="Invalid username or password")
     
     # Generiraj JWT token
